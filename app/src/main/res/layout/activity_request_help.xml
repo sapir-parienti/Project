@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="שם מלא:"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/fullNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="הכנס שם מלא" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="מספר דירה: "
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/apartmentNumberEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="הכנס מספר דירה"
+        android:inputType="number" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="פרטי הבקשה:"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/helpDetailsEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="פרט מה העזרה שאתה צריך"
+        android:inputType="textMultiLine"
+        android:minHeight="100dp" />
+
+    <Button
+        android:id="@+id/requestHelpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="בקש עזרה"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/cancelHelpRequestButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="בטל בקשת עזרה"
+        android:layout_marginTop="8dp"
+        android:visibility="gone" /> </LinearLayout>

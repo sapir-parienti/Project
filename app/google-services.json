@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "383180807326",
+    "project_id": "binyan-7a70d",
+    "storage_bucket": "binyan-7a70d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:383180807326:android:1c3a1f2bceb6cc69b26f8f",
+        "android_client_info": {
+          "package_name": "com.example.project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZ-4km2l-93Ps2OtP3sqkikZDnidZYfQ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textHello"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:padding="10dp"
+        android:text="שלום!"
+        android:textSize="40dp" />
+
+    <Button
+        android:id="@+id/btnComplaint"
+        android:layout_width="192dp"
+        android:layout_height="121dp"
+        android:layout_marginTop="10dp"
+        android:text="התחבר" />
+
+    <Button
+        android:id="@+id/btnChats"
+        android:layout_width="192dp"
+        android:layout_height="121dp"
+        android:layout_marginTop="10dp"
+        android:text="צפייה בצ'אטים" />
+
+</LinearLayout>

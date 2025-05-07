@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="נושא התלונה:"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/subjectEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="הכנס נושא" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="תיאור התלונה:"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/descriptionEditText"
+        android:layout_width="376dp"
+        android:layout_height="262dp"
+        android:gravity="top|start"
+        android:hint="הכנס תיאור מפורט"
+        android:inputType="textMultiLine"
+        android:minHeight="100dp" />
+
+    <Button
+        android:id="@+id/sendComplaintButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="שלח תלונה"
+        android:layout_marginTop="24dp" />
+
+</LinearLayout>
