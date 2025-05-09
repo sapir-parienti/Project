@@ -1,114 +1,52 @@
 package com.example.project;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import java.util.Calendar;
+
 
 public class MainActivity extends AppCompatActivity {
-
-    private EditText emailEditText;
-    private EditText passwordEditText;
-    private Button loginButton;
-    private TextView forgotPasswordTextView;
-    private FirebaseAuth mAuth;
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_main);
 
-        emailEditText = findViewById(R.id.emailEditText);
-        passwordEditText = findViewById(R.id.passwordEditText);
-        loginButton = findViewById(R.id.loginButton);
-        forgotPasswordTextView = findViewById(R.id.forgotPasswordTextView);
+        setDailyAlarm();
+    }
 
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
+    private void setDailyAlarm() {
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, NotificationReceiver.class);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = emailEditText.getText().toString().trim();
-                String password = passwordEditText.getText().toString().trim();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
 
-                if (TextUtils.isEmpty(email)) {
-                    emailEditText.setError("יש להזין אימייל");
-                    return;
-                }
+        // הגדר שעת התחלה 16:00
+        int hour = 16;
+        int minute = 0;
 
-                if (TextUtils.isEmpty(password)) {
-                    passwordEditText.setError("יש להזין סיסמה");
-                    return;
-                }
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
-                mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Toast.makeText(MainActivity.this, "התחברות מוצלחת!", Toast.LENGTH_SHORT).show();
-                                    // כאן תוסיף את הלוגיקה למעבר למסך הבא (למשל, Intent לפעילות הראשית)
-                                    // startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                    finish();
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    try {
-                                        throw task.getException();
-                                    } catch (FirebaseAuthInvalidUserException e) {
-                                        emailEditText.setError("משתמש זה לא קיים.");
-                                        emailEditText.requestFocus();
-                                    } catch (FirebaseAuthInvalidCredentialsException e) {
-                                        passwordEditText.setError("סיסמה שגויה.");
-                                        passwordEditText.requestFocus();
-                                    } catch (Exception e) {
-                                        Toast.makeText(MainActivity.this, "התחברות נכשלה: " + e.getMessage(),
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-                        });
-            }
-        });
+        Log.d(TAG, "Setting alarm for: " + calendar.getTime().toString());
 
-        forgotPasswordTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = emailEditText.getText().toString().trim();
-                if (TextUtils.isEmpty(email)) {
-                    emailEditText.setError("יש להזין אימייל כדי לשחזר סיסמה");
-                    return;
-                }
 
-                mAuth.sendPasswordResetEmail(email)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(MainActivity.this, "קישור לאיפוס סיסמה נשלח לאימייל שלך",
-                                            Toast.LENGTH_LONG).show();
-                                } else {
-                                    Toast.makeText(MainActivity.this, "שליחת קישור לאיפוס סיסמה נכשלה: " + task.getException().getMessage(),
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-            }
-        });
+        // חזור על האזעקה כל יום (INTERVAL_DAY הוא קבוע שמייצג 24 שעות במילישניות)
+        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, alarmIntent);
+
+        Log.d(TAG, "Daily alarm scheduled");
     }
 }
