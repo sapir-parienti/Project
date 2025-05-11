@@ -6,23 +6,37 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/emailEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/editTextEmailSignup"
+        android:layout_width="379dp"
+        android:layout_height="66dp"
         android:hint="אימייל"
         android:inputType="textEmailAddress" />
 
     <EditText
-        android:id="@+id/passwordEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/editTextFullNameSignup"
+        android:layout_width="379dp"
+        android:layout_height="110dp"
+        android:hint="שם מלא"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/editTextBuildingCodeSignup"
+        android:layout_width="381dp"
+        android:layout_height="107dp"
+        android:hint="קוד בניין"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/editTextPasswordSignup"
+        android:layout_width="378dp"
+        android:layout_height="114dp"
         android:hint="סיסמה"
         android:inputType="textPassword" />
 
     <Button
-        android:id="@+id/registerButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="יצירת משתמש" />
+        android:id="@+id/buttonSignup"
+        android:layout_width="379dp"
+        android:layout_height="82dp"
+        android:text="הרשמה" />
 
 </LinearLayout>

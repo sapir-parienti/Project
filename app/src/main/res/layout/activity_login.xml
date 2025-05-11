@@ -6,33 +6,43 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/emailEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/editTextEmailLogin"
+        android:layout_width="378dp"
+        android:layout_height="111dp"
         android:hint="אימייל"
         android:inputType="textEmailAddress" />
 
     <EditText
-        android:id="@+id/passwordEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/editTextPasswordLogin"
+        android:layout_width="379dp"
+        android:layout_height="92dp"
         android:hint="סיסמה"
         android:inputType="textPassword" />
 
+    <EditText
+        android:id="@+id/editTextBuildingCodeLogin"
+        android:layout_width="381dp"
+        android:layout_height="117dp"
+        android:hint="קוד בניין"
+        android:inputType="text" />
+
     <Button
-        android:id="@+id/loginButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/buttonLogin"
+        android:layout_width="381dp"
+        android:layout_height="108dp"
         android:text="התחברות" />
 
-    <TextView
-        android:id="@+id/forgotPasswordTextView"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/buttonForgotPassword"
+        android:layout_width="381dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginTop="8dp"
-        android:text="שכחתי סיסמה"
-        android:clickable="true"
-        android:focusable="true" />
+        android:text="שכחתי סיסמה" />
+
+    <Button
+        android:id="@+id/buttonSignup"
+        android:layout_width="381dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="16dp"
+        android:text="אין לך חשבון? הרשמה" />
 
 </LinearLayout>
