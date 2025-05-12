@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +21,68 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Button buttonBoard = findViewById(R.id.buttonBoard);
+        Button buttonProfile = findViewById(R.id.buttonProfile);
+        Button buttonHelp = findViewById(R.id.buttonHelp);
+        Button buttonForm = findViewById(R.id.buttonForm);
+        Button buttonViewHelp = findViewById(R.id.buttonViewHelp);
+
+        buttonBoard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // יצירת Intent כדי לעבור למסך הבא
+                Intent intent = new Intent(MainActivity.this, ViewBuildingNotificationsActivity.class);
+
+                // הפעלת המסך הבא באמצעות ה-Intent
+                startActivity(intent);
+            }
+        });
+
+        buttonProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // יצירת Intent כדי לעבור למסך הבא
+                Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
+
+                // הפעלת המסך הבא באמצעות ה-Intent
+                startActivity(intent);
+            }
+        });
+
+        buttonHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // יצירת Intent כדי לעבור למסך הבא
+                Intent intent = new Intent(MainActivity.this, RequestHelpActivity.class);
+
+                // הפעלת המסך הבא באמצעות ה-Intent
+                startActivity(intent);
+            }
+        });
+
+        buttonForm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // יצירת Intent כדי לעבור למסך הבא
+                Intent intent = new Intent(MainActivity.this, RequestHelpActivity.class);
+
+                // הפעלת המסך הבא באמצעות ה-Intent
+                startActivity(intent);
+            }
+        });
+
+
+        buttonViewHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // יצירת Intent כדי לעבור למסך הבא
+                Intent intent = new Intent(MainActivity.this, ViewOpenHelpRequestsActivity.class);
+
+                // הפעלת המסך הבא באמצעות ה-Intent
+                startActivity(intent);
+            }
+        });
+
 
         setDailyAlarm();
     }
@@ -49,4 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "Daily alarm scheduled");
     }
+
+
 }

@@ -5,58 +5,35 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="שם מלא:"
-        android:textSize="18sp" />
+    <EditText
+        android:id="@+id/editTextFullName"
+        android:layout_width="379dp"
+        android:layout_height="73dp"
+        android:hint="שם מלא" />
 
     <EditText
-        android:id="@+id/fullNameEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="הכנס שם מלא" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="מספר דירה: "
-        android:textSize="18sp" />
-
-    <EditText
-        android:id="@+id/apartmentNumberEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="הכנס מספר דירה"
+        android:id="@+id/editTextApartmentNumber"
+        android:layout_width="379dp"
+        android:layout_height="86dp"
+        android:layout_marginTop="8dp"
+        android:hint="מספר דירה"
         android:inputType="number" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="פרטי הבקשה:"
-        android:textSize="18sp" />
-
     <EditText
-        android:id="@+id/helpDetailsEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="פרט מה העזרה שאתה צריך"
-        android:inputType="textMultiLine"
-        android:minHeight="100dp" />
-
-    <Button
-        android:id="@+id/requestHelpButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="בקש עזרה"
-        android:layout_marginTop="16dp" />
-
-    <Button
-        android:id="@+id/cancelHelpRequestButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="בטל בקשת עזרה"
+        android:id="@+id/editTextHelpRequestContent"
+        android:layout_width="379dp"
+        android:layout_height="182dp"
         android:layout_marginTop="8dp"
-        android:visibility="gone" /> </LinearLayout>
+        android:gravity="top|start"
+        android:hint="תיאור בקשת העזרה"
+        android:inputType="textMultiLine"
+        android:minHeight="150dp" />
+
+    <Button
+        android:id="@+id/buttonPublishHelpRequest"
+        android:layout_width="180dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="16dp"
+        android:text="פרסם בקשת עזרה" />
+
+</LinearLayout>

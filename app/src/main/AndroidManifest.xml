@@ -15,7 +15,22 @@
         android:theme="@style/Theme.Project"
         tools:targetApi="31">
         <activity
-            android:name=".ViewAllNotificationsActivity"
+            android:name=".ViewSubmittedRequestsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SubmitRequestFormActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PublishBuildingNotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewBuildingNotificationsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UserProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewOpenHelpRequestsActivity"
             android:exported="false" />
         <activity
             android:name=".ManagerActivity"
@@ -40,16 +55,7 @@
             android:name=".RequestHelpActivity"
             android:exported="false" />
         <activity
-            android:name=".PostMessageActivity"
-            android:exported="false" />
-        <activity
             android:name=".CreateUserActivity"
-            android:exported="false" />
-        <activity
-            android:name=".AfterComplaintActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ComplaintActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
