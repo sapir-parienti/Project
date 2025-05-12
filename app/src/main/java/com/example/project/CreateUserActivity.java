@@ -26,7 +26,7 @@ public class CreateUserActivity extends AppCompatActivity {
     private EditText editTextEmail, editTextFullName, editTextBuildingCode, editTextPassword;
     private Button buttonSignup;
     private FirebaseAuth mAuth;
-    private DatabaseReference buildingsRef;
+    private DatabaseReference buildingsRef, usersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +35,7 @@ public class CreateUserActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         buildingsRef = FirebaseDatabase.getInstance().getReference().child("buildings");
+        usersRef = FirebaseDatabase.getInstance().getReference().child("users");
 
         editTextEmail = findViewById(R.id.editTextEmailSignup);
         editTextFullName = findViewById(R.id.editTextFullNameSignup);
@@ -54,49 +55,40 @@ public class CreateUserActivity extends AppCompatActivity {
                     editTextEmail.setError("יש להזין אימייל");
                     return;
                 }
-
                 if (TextUtils.isEmpty(fullName)) {
                     editTextFullName.setError("יש להזין שם מלא");
                     return;
                 }
-
                 if (TextUtils.isEmpty(buildingCode)) {
                     editTextBuildingCode.setError("יש להזין קוד בניין");
                     return;
-                }
-
-                if (TextUtils.isEmpty(password)) {
+                } if (TextUtils.isEmpty(password)) {
                     editTextPassword.setError("יש להזין סיסמה");
                     return;
                 }
 
-                // אימות קוד בניין מול Firebase
                 buildingsRef.child(buildingCode).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            // קוד הבניין קיים, המשך בהרשמה
                             mAuth.createUserWithEmailAndPassword(email, password)
                                     .addOnCompleteListener(CreateUserActivity.this, new OnCompleteListener<AuthResult>() {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if (task.isSuccessful()) {
-                                                // הרשמה מוצלחת, שמור פרטים נוספים ב-Firebase Database
                                                 String userId = mAuth.getCurrentUser().getUid();
-                                                FirebaseDatabase.getInstance().getReference().child("users").child(userId)
-                                                        .setValue(new User(fullName, buildingCode, email));
+                                                usersRef.child(userId)
+                                                        .setValue(new User(fullName, buildingCode, email, false)); // ברירת מחדל: לא מנהל
                                                 Toast.makeText(CreateUserActivity.this, "הרשמה בוצעה בהצלחה", Toast.LENGTH_SHORT).show();
                                                 startActivity(new Intent(CreateUserActivity.this, MainActivity.class));
                                                 finish();
                                             } else {
-                                                // אם ההרשמה נכשלה, הצג הודעה למשתמש.
                                                 Toast.makeText(CreateUserActivity.this, "הרשמה נכשלה: " + task.getException().getMessage(),
                                                         Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
                         } else {
-                            // קוד הבניין לא קיים
                             editTextBuildingCode.setError("קוד בניין לא תקין");
                             Toast.makeText(CreateUserActivity.this, "קוד בניין לא תקין", Toast.LENGTH_SHORT).show();
                         }
@@ -115,15 +107,17 @@ public class CreateUserActivity extends AppCompatActivity {
         public String fullName;
         public String buildingCode;
         public String email;
+        public boolean isManager;
 
         public User() {
             // דרוש עבור Firebase
         }
 
-        public User(String fullName, String buildingCode, String email) {
+        public User(String fullName, String buildingCode, String email, boolean isManager) {
             this.fullName = fullName;
             this.buildingCode = buildingCode;
             this.email = email;
+            this.isManager = isManager;
         }
     }
 }

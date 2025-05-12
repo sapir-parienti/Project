@@ -1,81 +1,113 @@
 package com.example.project;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class PostMessageActivity extends AppCompatActivity {
 
-    private EditText messageEditText;
-    private Button postButton;
-    private DatabaseReference bulletinBoardRef;
-    private FirebaseUser currentUser;
-
-    // Replace with the specific User ID that is allowed to post
-    private final String ADMIN_USER_ID = "YOUR_ADMIN_USER_ID";
+    private EditText editTextNotificationContent;
+    private Button buttonPublishNotification;
+    private DatabaseReference notificationsRef;
+    private String currentBuildingCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_message);
 
-        messageEditText = findViewById(R.id.messageEditText);
-        postButton = findViewById(R.id.postButton);
+        editTextNotificationContent = findViewById(R.id.editTextNotificationContent);
+        buttonPublishNotification = findViewById(R.id.buttonPublishNotification);
 
-        // Initialize Firebase Realtime Database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        bulletinBoardRef = database.getReference("bulletin_board");
+        // קבל את קוד הבניין של המשתמש הנוכחי
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        currentBuildingCode = snapshot.child("buildingCode").getValue(String.class);
+                        if (currentBuildingCode != null) {
+                            notificationsRef = FirebaseDatabase.getInstance().getReference("building_notifications").child(currentBuildingCode);
+                        } else {
+                            Toast.makeText(PostMessageActivity.this, "לא נמצא קוד בניין עבור משתמש זה.", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    } else {
+                        Toast.makeText(PostMessageActivity.this, "פרטי משתמש לא נמצאו.", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                }
 
-        // Get the current logged-in user
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(PostMessageActivity.this, "שגיאה בקבלת קוד בניין: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            });
+        } else {
+            Toast.makeText(PostMessageActivity.this, "משתמש לא מחובר.", Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
-        postButton.setOnClickListener(new View.OnClickListener() {
+        buttonPublishNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String messageText = messageEditText.getText().toString().trim();
+                String content = editTextNotificationContent.getText().toString().trim();
 
-                if (messageText.isEmpty()) {
-                    messageEditText.setError("הודעה לא יכולה להיות ריקה");
+                if (TextUtils.isEmpty(content)) {
+                    editTextNotificationContent.setError("יש להזין תוכן להודעה");
                     return;
                 }
 
-                if (currentUser != null && currentUser.getUid().equals(ADMIN_USER_ID)) {
-                    String userId = currentUser.getUid();
-                    String displayName = currentUser.getDisplayName();
-                    if (displayName == null || displayName.isEmpty()) {
-                        displayName = "מנהל";
-                    }
+                if (notificationsRef != null) {
+                    String notificationId = notificationsRef.push().getKey();
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                    String date = dateFormat.format(calendar.getTime());
+                    String time = timeFormat.format(calendar.getTime());
+                    long timestamp = calendar.getTimeInMillis();
 
-                    String messageId = bulletinBoardRef.push().getKey();
-                    Map<String, Object> messageData = new HashMap<>();
-                    messageData.put("author", displayName);
-                    messageData.put("text", messageText);
-                    messageData.put("timestamp", System.currentTimeMillis());
+                    Map<String, Object> notificationData = new HashMap<>();
+                    notificationData.put("content", content);
+                    notificationData.put("date", date);
+                    notificationData.put("time", time);
+                    notificationData.put("timestamp", timestamp);
 
-                    bulletinBoardRef.child(messageId).setValue(messageData)
+                    notificationsRef.child(notificationId).setValue(notificationData)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(PostMessageActivity.this, "ההודעה פורסמה בהצלחה!", Toast.LENGTH_SHORT).show();
-                                    messageEditText.setText("");
-                                    finish();
+                                    Toast.makeText(PostMessageActivity.this, "הודעה פורסמה בהצלחה", Toast.LENGTH_SHORT).show();
+                                    editTextNotificationContent.setText("");
                                 } else {
-                                    Toast.makeText(PostMessageActivity.this, "פרסום ההודעה נכשל.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(PostMessageActivity.this, "שגיאה בפרסום ההודעה: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                 } else {
-                    Toast.makeText(PostMessageActivity.this, "רק מנהל המערכת יכול לפרסם הודעות.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PostMessageActivity.this, "שגיאה: לא ניתן לפרסם הודעה כרגע.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

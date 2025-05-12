@@ -25,7 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText editTextEmail, editTextPassword, editTextBuildingCode;
-    private Button buttonLogin, buttonForgotPassword, buttonSignup; // הוספנו כפתור הרשמה
+    private Button buttonLogin, buttonForgotPassword, buttonSignup;
     private FirebaseAuth mAuth;
     private DatabaseReference usersRef;
 
@@ -36,25 +36,55 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        // בדוק אם המשתמש כבר מחובר
+        // בדיקה האם משתמש מחובר כבר
         if (currentUser != null) {
-            // משתמש מחובר, עבור ישירות ל-MainActivity
-            startMainActivity();
-            finish(); // סגור את LoginActivity כדי שלא יחזרו אליו בלחיצה על "חזור"
-            return; // אל תמשיך בהצגת הלייאוט של מסך ההתחברות
+            // משתמש מחובר, קבל את ה-UID שלו ובדוק את סטטוס המנהל
+            String userId = currentUser.getUid();
+            usersRef = FirebaseDatabase.getInstance().getReference().child("users").child(userId);
+            usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        Boolean isManager = dataSnapshot.child("isManager").getValue(Boolean.class);
+                        if (isManager != null && isManager) {
+                            startManagerActivity();
+                        } else {
+                            startUserActivity();
+                        }
+                        finish(); // סגור את LoginActivity
+                    } else {
+                        // משתמש מחובר ב-Auth אבל לא קיים ב-DB (מקרה נדיר)
+                        // כדאי לטפל במקרה הזה, למשל להציג מסך פרופיל להשלמה
+                        Toast.makeText(LoginActivity.this, "שגיאה: פרטי משתמש לא נמצאו", Toast.LENGTH_LONG).show();
+                        // אפשרות לנתק את המשתמש כאן: mAuth.signOut();
+                        setContentView(R.layout.activity_login); // הצג את מסך ההתחברות
+                        setupLoginButtons(); // הגדר את פעולות הכפתורים
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(LoginActivity.this, "שגיאה בקריאת נתוני משתמש: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                    setContentView(R.layout.activity_login); // הצג את מסך ההתחברות
+                    setupLoginButtons(); // הגדר את פעולות הכפתורים
+                }
+            });
+            return; // אל תמשיך בהצגת הלייאוט של מסך ההתחברות כרגע
         }
 
-        // אם המשתמש לא מחובר, הצג את לייאוט מסך ההתחברות
+        // אם המשתמש לא מחובר, הצג את לייאוט מסך ההתחברות והגדר את הכפתורים
         setContentView(R.layout.activity_login);
+        setupLoginButtons();
+    }
 
+    private void setupLoginButtons() {
         usersRef = FirebaseDatabase.getInstance().getReference().child("users");
-
         editTextEmail = findViewById(R.id.editTextEmailLogin);
         editTextPassword = findViewById(R.id.editTextPasswordLogin);
         editTextBuildingCode = findViewById(R.id.editTextBuildingCodeLogin);
         buttonLogin = findViewById(R.id.buttonLogin);
         buttonForgotPassword = findViewById(R.id.buttonForgotPassword);
-        buttonSignup = findViewById(R.id.buttonSignup); // קישור לכפתור הרשמה
+        buttonSignup = findViewById(R.id.buttonSignup);
 
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,20 +113,22 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    // בדוק אם קוד הבניין תואם לזה של המשתמש
                                     String userId = mAuth.getCurrentUser().getUid();
                                     usersRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             if (dataSnapshot.exists()) {
                                                 String userBuildingCode = dataSnapshot.child("buildingCode").getValue(String.class);
+                                                Boolean isManager = dataSnapshot.child("isManager").getValue(Boolean.class);
+
                                                 if (buildingCode.equals(userBuildingCode)) {
-                                                    // התחברות מוצלחת, קוד בניין תואם
-                                                    Toast.makeText(LoginActivity.this, "התחברות בוצעה בהצלחה", Toast.LENGTH_SHORT).show();
-                                                    startMainActivity();
+                                                    if (isManager != null && isManager) {
+                                                        startManagerActivity();
+                                                    } else {
+                                                        startUserActivity();
+                                                    }
                                                     finish();
                                                 } else {
-                                                    // קוד בניין לא תואם
                                                     Toast.makeText(LoginActivity.this, "קוד בניין לא תואם לחשבון זה", Toast.LENGTH_LONG).show();
                                                 }
                                             } else {
@@ -110,7 +142,6 @@ public class LoginActivity extends AppCompatActivity {
                                         }
                                     });
                                 } else {
-                                    // אם ההתחברות נכשלה, הצג הודעה למשתמש.
                                     Toast.makeText(LoginActivity.this, "התחברות נכשלה: " + task.getException().getMessage(),
                                             Toast.LENGTH_SHORT).show();
                                 }
@@ -126,7 +157,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // טיפול במעבר למסך הרשמה
         buttonSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,7 +165,13 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void startMainActivity() {
+    private void startManagerActivity() {
+        Intent intent = new Intent(this, ManagerActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void startUserActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

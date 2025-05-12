@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/messageEditText"
+        android:id="@+id/editTextNotificationContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="הכנס את ההודעה שלך כאן"
+        android:hint="תוכן ההודעה"
+        android:gravity="top|start"
         android:inputType="textMultiLine"
-        android:minHeight="100dp" />
+        android:minHeight="150dp" />
 
     <Button
-        android:id="@+id/postButton"
+        android:id="@+id/buttonPublishNotification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="פרסם הודעה"
