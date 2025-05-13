@@ -123,7 +123,7 @@ public class RequestHelpActivity extends AppCompatActivity {
                                     editTextFullName.setText("");
                                     editTextApartmentNumber.setText("");
                                     editTextHelpRequestContent.setText("");
-                                    // כאן צריך להוסיף קוד לשליחת התראה FCM
+                                    //
                                 } else {
                                     Toast.makeText(RequestHelpActivity.this, "שגיאה בפרסום בקשת העזרה: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }

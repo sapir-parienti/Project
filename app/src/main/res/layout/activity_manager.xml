@@ -34,10 +34,9 @@
         android:text="פרסם הודעה לבניין"
         app:layout_constraintBottom_toTopOf="@+id/buttonForm"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.68"
-        app:layout_constraintStart_toEndOf="@+id/buttonViewHelp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonBoard"
-        app:layout_constraintVertical_bias="0.681" />
+        app:layout_constraintVertical_bias="0.34" />
 
     <Button
         android:id="@+id/buttonHelp"
@@ -70,20 +69,6 @@
         android:layout_marginBottom="64dp"
         android:text="צפייה בפרופיל האישי"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonViewHelp"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
-        android:id="@+id/buttonViewHelp"
-        android:layout_width="139dp"
-        android:layout_height="137dp"
-        android:layout_marginEnd="64dp"
-        android:text="צפייה בבקשות העזרה"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonForm"
-        app:layout_constraintHorizontal_bias="0.891"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonHelp"
-        app:layout_constraintVertical_bias="0.122" />
 </androidx.constraintlayout.widget.ConstraintLayout>

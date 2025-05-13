@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Project"
         tools:targetApi="31">
         <activity
+            android:name=".test1"
+            android:exported="false" />
+        <activity
             android:name=".ViewSubmittedRequestsActivity"
             android:exported="false" />
         <activity

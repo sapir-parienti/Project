@@ -45,13 +45,6 @@
             android:textSize="12sp"
             android:text="תאריך ושעה" />
 
-        <Button
-            android:id="@+id/buttonCloseRequest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="סגור בקשה"
-            android:layout_marginTop="16dp"
-            android:visibility="gone" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
