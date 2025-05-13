@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         Button buttonProfile = findViewById(R.id.buttonProfile);
         Button buttonHelp = findViewById(R.id.buttonHelp);
         Button buttonForm = findViewById(R.id.buttonForm);
-        Button buttonViewHelp = findViewById(R.id.buttonViewHelp);
+
 
         buttonBoard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // יצירת Intent כדי לעבור למסך הבא
-                Intent intent = new Intent(MainActivity.this, RequestHelpActivity.class);
+                Intent intent = new Intent(MainActivity.this, SubmitRequestFormActivity.class);
 
                 // הפעלת המסך הבא באמצעות ה-Intent
                 startActivity(intent);
@@ -72,16 +72,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        buttonViewHelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // יצירת Intent כדי לעבור למסך הבא
-                Intent intent = new Intent(MainActivity.this, ViewOpenHelpRequestsActivity.class);
-
-                // הפעלת המסך הבא באמצעות ה-Intent
-                startActivity(intent);
-            }
-        });
 
 
         setDailyAlarm();

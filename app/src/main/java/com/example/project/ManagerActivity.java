@@ -24,7 +24,6 @@ public class ManagerActivity extends AppCompatActivity {
         Button buttonProfile = findViewById(R.id.buttonProfile);
         Button buttonHelp = findViewById(R.id.buttonHelp);
         Button buttonForm = findViewById(R.id.buttonForm);
-        Button buttonViewHelp = findViewById(R.id.buttonViewHelp);
         Button buttonPublish = findViewById(R.id.buttonPublish);
 
 
@@ -73,16 +72,7 @@ public class ManagerActivity extends AppCompatActivity {
         });
 
 
-        buttonViewHelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // יצירת Intent כדי לעבור למסך הבא
-                Intent intent = new Intent(ManagerActivity.this, ViewOpenHelpRequestsActivity.class);
 
-                // הפעלת המסך הבא באמצעות ה-Intent
-                startActivity(intent);
-            }
-        });
 
         buttonPublish.setOnClickListener(new View.OnClickListener() {
             @Override
