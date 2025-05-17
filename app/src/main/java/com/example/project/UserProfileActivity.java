@@ -3,6 +3,7 @@ package com.example.project;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,6 +35,9 @@ public class UserProfileActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference usersRef;
     private String currentUserId;
+    private Button logoutButton;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,22 @@ public class UserProfileActivity extends AppCompatActivity {
         textViewEmail = findViewById(R.id.textViewEmail);
         buttonSaveProfile = findViewById(R.id.buttonSaveProfile);
         progressBar = findViewById(R.id.progressBar);
+
+        logoutButton = findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // התנתקות משתמש מפיירבייס
+                mAuth.signOut();
+
+                // לאחר ההתנתקות, navigate למסך ההתחברות
+                Intent intent = new Intent(UserProfileActivity.this, LoginActivity.class);
+                // סגירת כל ה-Activities הקודמים
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish(); // סגירת ה-Activity הנוכחי
+            }
+        });
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
