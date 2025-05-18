@@ -107,7 +107,7 @@ public class PublishBuildingNotificationActivity extends AppCompatActivity {
             return;
         }
 
-        if (buildingNotificationsRef != null && currentBuildingCode != null && currentUserId != null && currentUserFullName != null && currentUserApartmentNumber != null) {
+        if (buildingNotificationsRef != null && currentBuildingCode != null && currentUserId != null && currentUserFullName != null) {
             progressBar.setVisibility(View.VISIBLE);
 
             String notificationId = buildingNotificationsRef.push().getKey();

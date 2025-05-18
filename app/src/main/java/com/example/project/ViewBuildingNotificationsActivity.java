@@ -161,7 +161,6 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
             String dateTime = notification.getDate() + " " + notification.getTime();
             holder.notificationDateTimeTextView.setText(dateTime);
             holder.notificationPublisherTextView.setText(notification.getFullName());
-            holder.notificationApartmentNumberTextView.setText("דירה: " + notification.getApartmentNumber());
         }
 
         @Override
@@ -182,7 +181,6 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
             notificationContentTextView = itemView.findViewById(R.id.notificationContentTextView);
             notificationDateTimeTextView = itemView.findViewById(R.id.notificationDateTimeTextView);
             notificationPublisherTextView = itemView.findViewById(R.id.notificationPublisherTextView);
-            notificationApartmentNumberTextView = itemView.findViewById(R.id.notificationApartmentNumberTextView);
         }
     }
 
@@ -190,7 +188,6 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
     public static class BuildingNotification {
         private String publisherId;
         private String fullName;
-        private String apartmentNumber;
         private String content;
         private String date;
         private String time;
@@ -203,7 +200,6 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
         public BuildingNotification(String publisherId, String fullName, String apartmentNumber, String content, String date, String time, long timestamp) {
             this.publisherId = publisherId;
             this.fullName = fullName;
-            this.apartmentNumber = apartmentNumber;
             this.content = content;
             this.date = date;
             this.time = time;
@@ -218,9 +214,6 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
             return fullName;
         }
 
-        public String getApartmentNumber() {
-            return apartmentNumber;
-        }
 
         public String getContent() {
             return content;

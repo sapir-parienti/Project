@@ -21,13 +21,6 @@
             android:textSize="16sp"
             android:text="שם המפרסם" />
 
-        <TextView
-            android:id="@+id/notificationApartmentNumberTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="דירה: #"
-            android:layout_marginTop="4dp" />
 
         <TextView
             android:id="@+id/notificationContentTextView"

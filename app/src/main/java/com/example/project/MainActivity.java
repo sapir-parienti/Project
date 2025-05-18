@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Button buttonBoard = findViewById(R.id.buttonBoard);
         Button buttonProfile = findViewById(R.id.buttonProfile);
-        Button buttonHelp = findViewById(R.id.buttonHelp);
         Button buttonForm = findViewById(R.id.buttonForm);
 
 
@@ -49,16 +48,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        buttonHelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // יצירת Intent כדי לעבור למסך הבא
-                Intent intent = new Intent(MainActivity.this, RequestHelpActivity.class);
-
-                // הפעלת המסך הבא באמצעות ה-Intent
-                startActivity(intent);
-            }
-        });
 
         buttonForm.setOnClickListener(new View.OnClickListener() {
             @Override

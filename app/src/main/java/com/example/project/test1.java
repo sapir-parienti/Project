@@ -20,6 +20,7 @@ public class test1 extends AppCompatActivity {
         setContentView(R.layout.activity_test1);
        //יש בעיה עם המסך הזה ואני שוקלת לוותר עליו כי דרישות החובה של פיירבייס עובדות גם בלעדיו
         Button buttonViewHelp = findViewById(R.id.buttonViewHelp);
+        Button buttonHelp = findViewById(R.id.buttonHelp);
 
         buttonViewHelp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -31,6 +32,18 @@ public class test1 extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        buttonHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // יצירת Intent כדי לעבור למסך הבא
+                Intent intent = new Intent(test1.this, RequestHelpActivity.class);
+
+                // הפעלת המסך הבא באמצעות ה-Intent
+                startActivity(intent);
+            }
+        });
+
 
     }
 }
