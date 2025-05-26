@@ -25,6 +25,11 @@ import com.google.firebase.database.Query;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An activity that displays a list of building notifications to the user.
+ * It retrieves notifications from a Firebase Realtime Database based on the user's
+ * building code and presents them in a RecyclerView.
+ */
 public class ViewBuildingNotificationsActivity extends AppCompatActivity {
 
     private RecyclerView buildingNotificationsRecyclerView;
@@ -35,6 +40,15 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
     private BuildingNotificationAdapter adapter;
     private List<BuildingNotification> buildingNotificationsList;
 
+    /**
+     * Called when the activity is first created.
+     * Initializes the UI components, sets up the RecyclerView, and initiates
+     * the process of fetching the current user's building code.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     * previously being shut down then this Bundle contains the data it most
+     * recently supplied in {@link #onSaveInstanceState}.  <b>Note: Otherwise it is null.</b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +68,10 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
         getCurrentBuildingCode();
     }
 
+    /**
+     * Retrieves the building code associated with the currently logged-in user from Firebase.
+     * Once the building code is obtained, it proceeds to fetch building notifications.
+     */
     private void getCurrentBuildingCode() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -77,7 +95,7 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    handleFirebaseError("שגיאה בקבלת קוד בניין: " + error.getMessage());
+                    handleFirebaseError("שגיאה בקבלת קוד בניין: " + error.getMessage()); // Error getting building code:
                 }
             });
         } else {
@@ -85,9 +103,14 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Fetches building notifications from Firebase Realtime Database.
+     * It orders notifications by timestamp (publication order) and updates the RecyclerView.
+     * Displays a message if no notifications are found.
+     */
     private void fetchBuildingNotifications() {
         if (buildingNotificationsRef != null) {
-            Query query = buildingNotificationsRef.orderByChild("timestamp"); // הצג לפי סדר הפרסום
+            Query query = buildingNotificationsRef.orderByChild("timestamp"); // Order by publication time
             query.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -105,48 +128,82 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    handleFirebaseError("שגיאה בטעינת הודעות בניין: " + databaseError.getMessage());
+                    handleFirebaseError("שגיאה בטעינת הודעות בניין: " + databaseError.getMessage()); // Error loading building notifications:
                 }
             });
         } else {
-            handleFirebaseError("לא ניתן לגשת להודעות בניין כרגע.");
+            handleFirebaseError("לא ניתן לגשת להודעות בניין כרגע."); // Cannot access building notifications at the moment.
         }
     }
 
+    /**
+     * Handles the scenario where the user is not logged in.
+     * Hides the progress bar, displays an empty message, and shows a toast.
+     */
     private void handleUserNotLoggedIn() {
         buildingNotificationsProgressBar.setVisibility(View.GONE);
         emptyBuildingNotificationsTextView.setVisibility(View.VISIBLE);
-        emptyBuildingNotificationsTextView.setText("משתמש לא מחובר.");
-        Toast.makeText(this, "משתמש לא מחובר.", Toast.LENGTH_SHORT).show();
+        emptyBuildingNotificationsTextView.setText("משתמש לא מחובר."); // User not logged in.
+        Toast.makeText(this, "משתמש לא מחובר.", Toast.LENGTH_SHORT).show(); // User not logged in.
     }
 
+    /**
+     * Handles the scenario where the building code for the current user is not found.
+     * Hides the progress bar, displays an empty message, and shows a toast.
+     */
     private void handleBuildingCodeNotFound() {
         buildingNotificationsProgressBar.setVisibility(View.GONE);
         emptyBuildingNotificationsTextView.setVisibility(View.VISIBLE);
-        emptyBuildingNotificationsTextView.setText("לא נמצא קוד בניין עבור משתמש זה.");
-        Toast.makeText(this, "לא נמצא קוד בניין עבור משתמש זה.", Toast.LENGTH_SHORT).show();
+        emptyBuildingNotificationsTextView.setText("לא נמצא קוד בניין עבור משתמש זה."); // Building code not found for this user.
+        Toast.makeText(this, "לא נמצא קוד בניין עבור משתמש זה.", Toast.LENGTH_SHORT).show(); // Building code not found for this user.
     }
 
+    /**
+     * Handles the scenario where user data is not found in Firebase.
+     * Hides the progress bar, displays an empty message, and shows a toast.
+     */
     private void handleUserDataNotFound() {
         buildingNotificationsProgressBar.setVisibility(View.GONE);
         emptyBuildingNotificationsTextView.setVisibility(View.VISIBLE);
-        emptyBuildingNotificationsTextView.setText("פרטי משתמש לא נמצאו.");
-        Toast.makeText(this, "פרטי משתמש לא נמצאו.", Toast.LENGTH_SHORT).show();
+        emptyBuildingNotificationsTextView.setText("פרטי משתמש לא נמצאו."); // User details not found.
+        Toast.makeText(this, "פרטי משתמש לא נמצאו.", Toast.LENGTH_SHORT).show(); // User details not found.
     }
 
+    /**
+     * Displays a Firebase-related error message as a toast.
+     * Hides the progress bar.
+     *
+     * @param errorMessage The error message to display.
+     */
     private void handleFirebaseError(String errorMessage) {
         buildingNotificationsProgressBar.setVisibility(View.GONE);
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
-    // Adapter עבור RecyclerView
+    /**
+     * RecyclerView Adapter for displaying building notifications.
+     */
     private static class BuildingNotificationAdapter extends RecyclerView.Adapter<BuildingNotificationViewHolder> {
         private List<BuildingNotification> notifications;
 
+        /**
+         * Constructs a new {@code BuildingNotificationAdapter}.
+         *
+         * @param notifications The list of {@link BuildingNotification} objects to display.
+         */
         public BuildingNotificationAdapter(List<BuildingNotification> notifications) {
             this.notifications = notifications;
         }
 
+        /**
+         * Called when RecyclerView needs a new {@link BuildingNotificationViewHolder} of the given type to represent
+         * an item.
+         *
+         * @param parent The ViewGroup into which the new View will be added after it is bound to
+         * an adapter position.
+         * @param viewType The view type of the new View.
+         * @return A new {@link BuildingNotificationViewHolder} that holds a View of the given view type.
+         */
         @NonNull
         @Override
         public BuildingNotificationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -154,6 +211,15 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
             return new BuildingNotificationViewHolder(view);
         }
 
+        /**
+         * Called by RecyclerView to display the data at the specified position. This method
+         * updates the contents of the {@link BuildingNotificationViewHolder#itemView} to reflect the item at the given
+         * position.
+         *
+         * @param holder The {@link BuildingNotificationViewHolder} which should be updated to represent the contents of the
+         * item at the given {@code position} in the data set.
+         * @param position The position of the item within the adapter's data set.
+         */
         @Override
         public void onBindViewHolder(@NonNull BuildingNotificationViewHolder holder, int position) {
             BuildingNotification notification = notifications.get(position);
@@ -163,19 +229,31 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
             holder.notificationPublisherTextView.setText(notification.getFullName());
         }
 
+        /**
+         * Returns the total number of items in the data set held by the adapter.
+         *
+         * @return The total number of items in this adapter.
+         */
         @Override
         public int getItemCount() {
             return notifications.size();
         }
     }
 
-    // ViewHolder עבור פריט הודעת בניין
+    /**
+     * ViewHolder for individual building notification items in the RecyclerView.
+     * It holds the views for displaying notification content, date/time, and publisher.
+     */
     public static class BuildingNotificationViewHolder extends RecyclerView.ViewHolder {
         TextView notificationContentTextView;
         TextView notificationDateTimeTextView;
         TextView notificationPublisherTextView;
-        TextView notificationApartmentNumberTextView;
 
+        /**
+         * Constructs a new {@code BuildingNotificationViewHolder}.
+         *
+         * @param itemView The view for a single list item.
+         */
         public BuildingNotificationViewHolder(@NonNull View itemView) {
             super(itemView);
             notificationContentTextView = itemView.findViewById(R.id.notificationContentTextView);
@@ -184,7 +262,10 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
         }
     }
 
-    // מודל נתונים עבור הודעת בניין
+    /**
+     * Data model for a building notification.
+     * Represents the structure of a notification as stored in Firebase.
+     */
     public static class BuildingNotification {
         private String publisherId;
         private String fullName;
@@ -193,10 +274,25 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
         private String time;
         private long timestamp;
 
+        /**
+         * Default constructor required for Firebase.
+         */
         public BuildingNotification() {
-            // דרוש עבור Firebase
+            // Required for Firebase
         }
 
+        /**
+         * Constructs a new {@code BuildingNotification} instance.
+         *
+         * @param publisherId The ID of the user who published the notification.
+         * @param fullName The full name of the publisher.
+         * @param apartmentNumber The apartment number of the publisher (though not used in this view directly,
+         * it's part of the constructor for potential future use or consistency).
+         * @param content The main content of the notification.
+         * @param date The date the notification was published.
+         * @param time The time the notification was published.
+         * @param timestamp The server timestamp when the notification was published, used for ordering.
+         */
         public BuildingNotification(String publisherId, String fullName, String apartmentNumber, String content, String date, String time, long timestamp) {
             this.publisherId = publisherId;
             this.fullName = fullName;
@@ -206,27 +302,50 @@ public class ViewBuildingNotificationsActivity extends AppCompatActivity {
             this.timestamp = timestamp;
         }
 
+        /**
+         * Gets the ID of the publisher.
+         * @return The publisher's user ID.
+         */
         public String getPublisherId() {
             return publisherId;
         }
 
+        /**
+         * Gets the full name of the publisher.
+         * @return The publisher's full name.
+         */
         public String getFullName() {
             return fullName;
         }
 
-
+        /**
+         * Gets the content of the notification.
+         * @return The notification's text content.
+         */
         public String getContent() {
             return content;
         }
 
+        /**
+         * Gets the date the notification was published.
+         * @return The publication date string.
+         */
         public String getDate() {
             return date;
         }
 
+        /**
+         * Gets the time the notification was published.
+         * @return The publication time string.
+         */
         public String getTime() {
             return time;
         }
 
+        /**
+         * Gets the timestamp of the notification's publication.
+         * @return The timestamp as a long.
+         */
         public long getTimestamp() {
             return timestamp;
         }

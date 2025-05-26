@@ -26,20 +26,84 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * PublishBuildingNotificationActivity allows users to publish notifications to their building community.
+ *
+ * This activity provides an interface for authenticated users to create and publish notifications
+ * that will be visible to all residents of their building. The activity handles user authentication,
+ * retrieves user details from Firebase, validates input, and publishes notifications with
+ * comprehensive metadata including timestamps and publisher information.
+ *
+ * Features:
+ * - User authentication verification
+ * - Automatic retrieval of user details (building code, full name, apartment number)
+ * - Input validation for notification content
+ * - Timestamp generation with date and time formatting
+ * - Progress indicators during database operations
+ * - Error handling and user feedback
+ * - Notification publishing to building-specific channels
+ *
+ * The notification data structure includes:
+ * - Publisher ID and personal details
+ * - Notification content
+ * - Publication date and time
+ * - Server timestamp for ordering
+ *
+ * @author [Your Name]
+ * @version 1.0
+ * @since 1.0
+ */
 public class PublishBuildingNotificationActivity extends AppCompatActivity {
 
+    /** Text input field for notification content */
     private EditText editTextNotificationContent;
+
+    /** Button to trigger notification publishing */
     private Button buttonPublishNotification;
+
+    /** Progress indicator for loading states during database operations */
     private ProgressBar progressBar;
 
+    /** Firebase Authentication instance for user verification */
     private FirebaseAuth mAuth;
+
+    /** Firebase Database reference for accessing user data */
     private DatabaseReference usersRef;
+
+    /** Firebase Database reference for publishing building notifications */
     private DatabaseReference buildingNotificationsRef;
+
+    /** Current authenticated user's unique identifier */
     private String currentUserId;
+
+    /** Building code associated with the current user */
     private String currentBuildingCode;
+
+    /** Full name of the current user for notification attribution */
     private String currentUserFullName;
+
+    /** Apartment number of the current user for identification */
     private String currentUserApartmentNumber;
 
+    /**
+     * Called when the activity is first created. Initializes the notification publishing interface
+     * and sets up Firebase services for user authentication and data operations.
+     *
+     * This method performs the following operations:
+     * 1. Sets up the activity layout and UI components
+     * 2. Initializes Firebase Authentication and verifies user login status
+     * 3. Retrieves current user details from Firebase Database
+     * 4. Sets up click listeners for the publish button
+     * 5. Handles cases where user is not authenticated
+     *
+     * If the user is not authenticated, the activity will display an error message
+     * and terminate. Otherwise, it proceeds to fetch user details required for
+     * notification publishing.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                          previously being shut down, this Bundle contains
+     *                          the data it most recently supplied in onSaveInstanceState(Bundle)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +132,23 @@ public class PublishBuildingNotificationActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Retrieves the current user's details from Firebase Realtime Database.
+     *
+     * This method fetches essential user information required for notification publishing:
+     * - Building code: Used to determine which building's notification channel to publish to
+     * - Full name: Used for notification attribution and identification
+     * - Apartment number: Provides additional context for other residents
+     *
+     * The method includes comprehensive error handling:
+     * - Shows progress indicator during database operation
+     * - Handles cases where user data doesn't exist
+     * - Manages database operation cancellations
+     * - Terminates activity if critical data is missing
+     *
+     * Upon successful retrieval, initializes the building notifications reference
+     * for the user's specific building.
+     */
     private void getUserDetails() {
         progressBar.setVisibility(View.VISIBLE);
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -99,6 +180,34 @@ public class PublishBuildingNotificationActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Publishes a notification to the building's notification channel in Firebase.
+     *
+     * This method handles the complete notification publishing process:
+     * 1. Validates that notification content is not empty
+     * 2. Verifies that all required user details are available
+     * 3. Generates a unique notification ID using Firebase's push() method
+     * 4. Creates timestamp information (date, time, and server timestamp)
+     * 5. Constructs a comprehensive notification data object
+     * 6. Uploads the notification to Firebase Database
+     * 7. Provides user feedback on success or failure
+     * 8. Clears the input field after successful publication
+     *
+     * The notification data structure includes:
+     * - publisherId: Unique identifier of the user publishing the notification
+     * - fullName: Display name for notification attribution
+     * - apartmentNumber: Additional context for other building residents
+     * - content: The actual notification message
+     * - date: Human-readable date in DD/MM/YYYY format
+     * - time: Human-readable time in HH:MM format
+     * - timestamp: Server-side timestamp for consistent ordering
+     *
+     * Error handling covers:
+     * - Empty notification content validation
+     * - Missing user details verification
+     * - Database operation failures
+     * - Network connectivity issues
+     */
     private void publishNotification() {
         String notificationContent = editTextNotificationContent.getText().toString().trim();
 

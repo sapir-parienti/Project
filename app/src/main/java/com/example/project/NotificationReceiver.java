@@ -14,11 +14,24 @@ import androidx.annotation.RequiresPermission;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+/**
+ * A {@link BroadcastReceiver} that handles daily notification reminders.
+ * This receiver is triggered by an alarm and displays a notification to the user,
+ * reminding them to check for new messages from the building committee.
+ */
 public class NotificationReceiver extends BroadcastReceiver {
     private static final String TAG = "NotificationReceiver";
     private static final String CHANNEL_ID = "daily_reminder_channel";
     private static final int NOTIFICATION_ID = 123;
 
+    /**
+     * Called when the BroadcastReceiver is receiving an Intent broadcast.
+     * This method is triggered when the daily reminder alarm goes off.
+     * It logs the alarm trigger and then calls {@link #showNotification(Context)} to display the notification.
+     *
+     * @param context The Context in which the receiver is running.
+     * @param intent The Intent being received.
+     */
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -26,32 +39,45 @@ public class NotificationReceiver extends BroadcastReceiver {
         showNotification(context);
     }
 
+    /**
+     * Displays a daily reminder notification to the user.
+     * This method first ensures that a notification channel is created (for Android Oreo and above),
+     * then builds and displays the notification.
+     *
+     * @param context The Context in which the notification should be shown.
+     */
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private void showNotification(Context context) {
         createNotificationChannel(context);
 
-        // Intent לפתיחת האפליקציה כאשר הנוטיפיקציה נלחצת
-        Intent appIntent = new Intent(context, MainActivity.class); // החלף ב-Activity הראשי שלך
+        // Intent to open the main application activity when the notification is clicked
+        Intent appIntent = new Intent(context, MainActivity.class); // Replace with your main Activity
         appIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                 // החלף באייקון מתאים
-                .setContentTitle("תזכורת יומית!")
-                .setContentText("אל תשכחו לבדוק הודעות חדשות מועד הבית!")
+                .setSmallIcon(R.drawable.ic_launcher_foreground) // Replace with a suitable icon
+                .setContentTitle("תזכורת יומית!") // Daily Reminder!
+                .setContentText("אל תשכחו לבדוק הודעות חדשות מועד הבית!") // Don't forget to check for new messages from the building committee!
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
-                .setAutoCancel(true); // הנוטיפיקציה תיעלם כאשר המשתמש ילחץ עליה
+                .setAutoCancel(true); // Notification will disappear when the user clicks on it
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(NOTIFICATION_ID, builder.build());
         Log.d(TAG, "Notification shown");
     }
 
+    /**
+     * Creates a notification channel for daily reminders.
+     * This is required for notifications on Android Oreo (API level 26) and higher.
+     *
+     * @param context The Context used to get the NotificationManager.
+     */
     private void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "תזכורת יומית";
-            String description = "ערוץ עבור תזכורות יומיות לאפליקציה";
+            CharSequence name = "תזכורת יומית"; // Daily Reminder
+            String description = "ערוץ עבור תזכורות יומיות לאפליקציה"; // Channel for daily reminders for the app
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);

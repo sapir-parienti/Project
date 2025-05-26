@@ -21,13 +21,73 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+/**
+ * CreateUserActivity handles new user registration for the building management system.
+ *
+ * This activity provides a registration interface where new users can create accounts
+ * by providing their email, full name, building code, and password. The activity
+ * validates the building code against the Firebase database before allowing registration
+ * and automatically creates user records with default non-manager privileges.
+ *
+ * Features:
+ * - User input validation for all required fields
+ * - Building code verification against Firebase database
+ * - Firebase Authentication account creation
+ * - User profile creation in Firebase Realtime Database
+ * - Automatic navigation to MainActivity after successful registration
+ * - Error handling for registration failures
+ *
+ * @author [Your Name]
+ * @version 1.0
+ * @since 1.0
+ */
 public class CreateUserActivity extends AppCompatActivity {
 
-    private EditText editTextEmail, editTextFullName, editTextBuildingCode, editTextPassword;
-    private Button buttonSignup;
-    private FirebaseAuth mAuth;
-    private DatabaseReference buildingsRef, usersRef;
+    /** Email input field for user registration */
+    private EditText editTextEmail;
 
+    /** Full name input field for user profile */
+    private EditText editTextFullName;
+
+    /** Building code input field for building association */
+    private EditText editTextBuildingCode;
+
+    /** Password input field for account security */
+    private EditText editTextPassword;
+
+    /** Signup button to initiate registration process */
+    private Button buttonSignup;
+
+    /** Firebase Authentication instance for creating user accounts */
+    private FirebaseAuth mAuth;
+
+    /** Firebase Database reference for validating building codes */
+    private DatabaseReference buildingsRef;
+
+    /** Firebase Database reference for storing user data */
+    private DatabaseReference usersRef;
+
+    /**
+     * Called when the activity is first created. Initializes the user registration interface
+     * and sets up Firebase services for authentication and data storage.
+     *
+     * This method performs the following operations:
+     * 1. Sets up the activity layout
+     * 2. Initializes Firebase Authentication and Database references
+     * 3. Binds UI components to their respective views
+     * 4. Sets up the signup button click listener with comprehensive validation
+     *
+     * The registration process includes:
+     * - Input validation for all required fields
+     * - Building code verification against the database
+     * - Firebase Authentication account creation
+     * - User profile creation with default settings
+     * - Navigation to MainActivity upon successful registration
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                          previously being shut down, this Bundle contains
+     *                          the data it most recently supplied in onSaveInstanceState(Bundle)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,16 +163,60 @@ public class CreateUserActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * User data model class for Firebase Realtime Database storage.
+     *
+     * This static nested class represents a user in the building management system.
+     * It contains all necessary user information including personal details,
+     * building association, and management privileges. The class is designed
+     * to work seamlessly with Firebase's automatic serialization/deserialization.
+     *
+     * The class includes:
+     * - Personal information (full name, email)
+     * - Building association (building code)
+     * - Authorization level (manager status)
+     * - Firebase-compatible constructors
+     *
+     * @author [Your Name]
+     * @version 1.0
+     * @since 1.0
+     */
     public static class User {
+
+        /** The user's full name as provided during registration */
         public String fullName;
+
+        /** The building code associating the user with a specific building */
         public String buildingCode;
+
+        /** The user's email address used for authentication */
         public String email;
+
+        /** Flag indicating whether the user has manager privileges (default: false) */
         public boolean isManager;
 
+        /**
+         * Default no-argument constructor required by Firebase for object deserialization.
+         *
+         * Firebase Realtime Database requires a public no-argument constructor
+         * to automatically convert database snapshots into Java objects.
+         */
         public User() {
             // דרוש עבור Firebase
         }
 
+        /**
+         * Parameterized constructor for creating User objects with specified values.
+         *
+         * This constructor is used when creating new user records during the
+         * registration process. By default, new users are created with manager
+         * privileges set to false for security purposes.
+         *
+         * @param fullName     The user's complete name
+         * @param buildingCode The code identifying the user's associated building
+         * @param email        The user's email address for authentication
+         * @param isManager    Boolean flag indicating manager privileges
+         */
         public User(String fullName, String buildingCode, String email, boolean isManager) {
             this.fullName = fullName;
             this.buildingCode = buildingCode;

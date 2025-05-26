@@ -22,13 +22,63 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+/**
+ * LoginActivity handles user authentication and navigation based on user roles.
+ *
+ * This activity provides a login interface for users to authenticate using email, password,
+ * and building code. It supports automatic login for already authenticated users and
+ * redirects them to appropriate activities based on their manager status.
+ *
+ * Features:
+ * - Firebase Authentication integration
+ * - Building code verification
+ * - Role-based navigation (Manager vs Regular User)
+ * - Automatic login for authenticated users
+ * - Password recovery and user registration navigation
+ *
+ * @author [Your Name]
+ * @version 1.0
+ * @since 1.0
+ */
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText editTextEmail, editTextPassword, editTextBuildingCode;
-    private Button buttonLogin, buttonForgotPassword, buttonSignup;
+    /** Email input field for user authentication */
+    private EditText editTextEmail;
+
+    /** Password input field for user authentication */
+    private EditText editTextPassword;
+
+    /** Building code input field for user verification */
+    private EditText editTextBuildingCode;
+
+    /** Login button to initiate authentication process */
+    private Button buttonLogin;
+
+    /** Forgot password button to navigate to password recovery */
+    private Button buttonForgotPassword;
+
+    /** Signup button to navigate to user registration */
+    private Button buttonSignup;
+
+    /** Firebase Authentication instance for handling user authentication */
     private FirebaseAuth mAuth;
+
+    /** Firebase Database reference for accessing user data */
     private DatabaseReference usersRef;
 
+    /**
+     * Called when the activity is first created. Handles automatic login for
+     * authenticated users and sets up the login interface for new users.
+     *
+     * The method performs the following operations:
+     * 1. Checks if a user is already authenticated
+     * 2. If authenticated, verifies user data and redirects based on manager status
+     * 3. If not authenticated, displays the login interface
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                          previously being shut down, this Bundle contains
+     *                          the data it most recently supplied in onSaveInstanceState(Bundle)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +127,21 @@ public class LoginActivity extends AppCompatActivity {
         setupLoginButtons();
     }
 
+    /**
+     * Sets up the login interface by initializing UI components and setting up event listeners.
+     *
+     * This method performs the following operations:
+     * 1. Initializes Firebase database reference
+     * 2. Binds UI components to their respective views
+     * 3. Sets up click listeners for login, forgot password, and signup buttons
+     * 4. Implements login validation and authentication logic
+     *
+     * The login process includes:
+     * - Input validation for email, password, and building code
+     * - Firebase authentication
+     * - Building code verification against user data
+     * - Role-based navigation after successful authentication
+     */
     private void setupLoginButtons() {
         usersRef = FirebaseDatabase.getInstance().getReference().child("users");
         editTextEmail = findViewById(R.id.editTextEmailLogin);
@@ -165,12 +230,26 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Starts the ManagerActivity for users with manager privileges.
+     *
+     * This method creates an intent to launch the ManagerActivity and finishes
+     * the current LoginActivity to prevent users from navigating back to the
+     * login screen using the back button.
+     */
     private void startManagerActivity() {
         Intent intent = new Intent(this, ManagerActivity.class);
         startActivity(intent);
         finish();
     }
 
+    /**
+     * Starts the MainActivity for regular users without manager privileges.
+     *
+     * This method creates an intent to launch the MainActivity and finishes
+     * the current LoginActivity to prevent users from navigating back to the
+     * login screen using the back button.
+     */
     private void startUserActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
