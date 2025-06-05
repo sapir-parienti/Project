@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +28,7 @@ import java.util.List;
 /**
  * An activity for managers to view submitted help requests from residents.
  * It retrieves requests from Firebase Realtime Database based on the manager's
- * building code and displays them in a RecyclerView. Managers can also mark requests as closed.
+ * building code and displays them in a RecyclerView.
  */
 public class ViewSubmittedRequestsActivity extends AppCompatActivity {
 
@@ -61,8 +60,8 @@ public class ViewSubmittedRequestsActivity extends AppCompatActivity {
         submittedRequestsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         submittedRequestsList = new ArrayList<>();
-        // Initialize the adapter with the list and a callback for closing requests
-        adapter = new SubmittedRequestAdapter(submittedRequestsList, this::closeRequest);
+        // Initialize the adapter with just the list (no close callback needed)
+        adapter = new SubmittedRequestAdapter(submittedRequestsList);
         submittedRequestsRecyclerView.setAdapter(adapter);
 
         progressBar.setVisibility(View.VISIBLE);
@@ -140,29 +139,6 @@ public class ViewSubmittedRequestsActivity extends AppCompatActivity {
     }
 
     /**
-     * Marks a specific help request as closed in the Firebase Realtime Database.
-     * After successfully closing a request, it refreshes the list of requests.
-     *
-     * @param requestId The unique ID of the request to be closed.
-     */
-    private void closeRequest(String requestId) {
-        if (requestsRef != null) {
-            requestsRef.child(requestId).child("isOpen").setValue(false)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(this, "הפנייה נסגרה בהצלחה.", Toast.LENGTH_SHORT).show(); // Request closed successfully.
-                            // Refresh the list after closing
-                            fetchSubmittedRequests();
-                        } else {
-                            handleFirebaseError("שגיאה בסגירת הפנייה: " + task.getException().getMessage()); // Error closing request:
-                        }
-                    });
-        } else {
-            handleFirebaseError("לא ניתן לגשת לפניות כרגע."); // Cannot access requests at the moment.
-        }
-    }
-
-    /**
      * Handles the scenario where the user is not logged in.
      * Hides the progress bar, displays an empty message, and shows a toast.
      */
@@ -211,17 +187,14 @@ public class ViewSubmittedRequestsActivity extends AppCompatActivity {
      */
     private static class SubmittedRequestAdapter extends RecyclerView.Adapter<SubmittedRequestViewHolder> {
         private List<SubmittedRequest> requests;
-        private final OnCloseClickListener onCloseClickListener;
 
         /**
          * Constructs a new {@code SubmittedRequestAdapter}.
          *
          * @param requests The list of {@link SubmittedRequest} objects to display.
-         * @param onCloseClickListener A callback interface for handling 'close request' button clicks.
          */
-        public SubmittedRequestAdapter(List<SubmittedRequest> requests, OnCloseClickListener onCloseClickListener) {
+        public SubmittedRequestAdapter(List<SubmittedRequest> requests) {
             this.requests = requests;
-            this.onCloseClickListener = onCloseClickListener;
         }
 
         /**
@@ -243,7 +216,7 @@ public class ViewSubmittedRequestsActivity extends AppCompatActivity {
         /**
          * Called by RecyclerView to display the data at the specified position. This method
          * updates the contents of the {@link SubmittedRequestViewHolder#itemView} to reflect the item at the given
-         * position. It also sets up the click listener for the 'Close Request' button.
+         * position.
          *
          * @param holder The {@link SubmittedRequestViewHolder} which should be updated to represent the contents of the
          * item at the given {@code position} in the data set.
@@ -258,28 +231,8 @@ public class ViewSubmittedRequestsActivity extends AppCompatActivity {
             holder.requestPublisherTextView.setText(request.getFullName());
             holder.requestApartmentNumberTextView.setText("דירה: " + request.getApartmentNumber()); // Apartment:
 
-            holder.buttonCloseRequest.setVisibility(View.VISIBLE);
-            holder.buttonCloseRequest.setOnClickListener(v -> {
-                // To get the key of the item, we need to find the item's position in Firebase
-                DatabaseReference requestsRef = FirebaseDatabase.getInstance().getReference("help_requests").child(request.getBuildingCode());
-                // Query by timestamp to uniquely identify the request, assuming timestamps are unique enough
-                Query query = requestsRef.orderByChild("timestamp").equalTo(request.getTimestamp());
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            onCloseClickListener.onCloseClick(snapshot.getKey());
-                            return; // Found the item, exit the loop
-                        }
-                        Toast.makeText(holder.itemView.getContext(), "שגיאה: לא ניתן לסגור בקשה זו.", Toast.LENGTH_SHORT).show(); // Error: Cannot close this request.
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Toast.makeText(holder.itemView.getContext(), "שגיאה באיתור מזהה בקשה: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show(); // Error locating request ID:
-                    }
-                });
-            });
+            // Hide the close button completely
+            holder.buttonCloseRequest.setVisibility(View.GONE);
         }
 
         /**
@@ -296,14 +249,14 @@ public class ViewSubmittedRequestsActivity extends AppCompatActivity {
     /**
      * ViewHolder for individual submitted request items in the RecyclerView.
      * It holds the views for displaying request content, date/time, publisher,
-     * apartment number, and a button to close the request.
+     * and apartment number.
      */
     public static class SubmittedRequestViewHolder extends RecyclerView.ViewHolder {
         TextView requestContentTextView;
         TextView requestDateTimeTextView;
         TextView requestPublisherTextView;
         TextView requestApartmentNumberTextView;
-        Button buttonCloseRequest;
+        TextView buttonCloseRequest; // Changed to TextView since it's now just hidden
 
         /**
          * Constructs a new {@code SubmittedRequestViewHolder}.
@@ -318,17 +271,6 @@ public class ViewSubmittedRequestsActivity extends AppCompatActivity {
             requestApartmentNumberTextView = itemView.findViewById(R.id.requestApartmentNumberTextView);
             buttonCloseRequest = itemView.findViewById(R.id.buttonCloseRequest);
         }
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when the 'Close Request' button is clicked.
-     */
-    interface OnCloseClickListener {
-        /**
-         * Called when the 'Close Request' button for a specific request is clicked.
-         * @param requestId The ID of the request to be closed.
-         */
-        void onCloseClick(String requestId);
     }
 
     /**
