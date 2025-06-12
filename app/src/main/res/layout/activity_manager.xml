@@ -17,16 +17,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <Button
         android:id="@+id/buttonBoard"
         android:layout_width="139dp"
         android:layout_height="137dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
         android:text="לוח הודעות הועד"
+        app:layout_constraintBottom_toTopOf="@+id/buttonProfile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewHello" />
-
+        app:layout_constraintHorizontal_bias="0.823"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.701" />
 
     <Button
         android:id="@+id/buttonPublish"
@@ -35,30 +37,34 @@
         android:text="פרסם הודעה לבניין"
         app:layout_constraintBottom_toTopOf="@+id/buttonForm"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.132"
+        app:layout_constraintHorizontal_bias="0.183"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewHello"
-        app:layout_constraintVertical_bias="0.081" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.704" />
 
     <Button
         android:id="@+id/buttonForm"
         android:layout_width="139dp"
         android:layout_height="137dp"
-        android:layout_marginEnd="32dp"
         android:text="צפייה בפניות לועד הבית"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.183"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.892" />
+        app:layout_constraintVertical_bias="0.806" />
 
     <Button
         android:id="@+id/buttonProfile"
         android:layout_width="139dp"
         android:layout_height="137dp"
-        android:layout_marginEnd="236dp"
-        android:layout_marginBottom="64dp"
+        android:layout_marginEnd="48dp"
         android:text="צפייה בפרופיל האישי"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.806" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

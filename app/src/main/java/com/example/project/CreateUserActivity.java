@@ -127,6 +127,11 @@ public class CreateUserActivity extends AppCompatActivity {
                     return;
                 }
 
+                if (password.length()<6){
+                    editTextPassword.setError("סיסמה צריכה להכיל לפחות 6 תווים");
+                    return;
+                }
+
                 buildingsRef.child(buildingCode).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
